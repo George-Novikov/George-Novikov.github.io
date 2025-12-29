@@ -1,0 +1,24 @@
+{
+  "name": "Histamine Load Tracker",
+  "short_name": "Histamine",
+  "description": "Track your daily histamine load and manage symptoms",
+  "start_url": "/histamine-tracker/",
+  "display": "standalone",
+  "background_color": "#1a1a2e",
+  "theme_color": "#60a5fa",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -4,6 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Histamine Load Tracker</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="description" content="Track your daily histamine load and manage symptoms">
+    <meta name="theme-color" content="#60a5fa">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Histamine">
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Apple Touch Icons (for iOS) -->
+    <link rel="apple-touch-icon" href="icon-192.png">
+    
     <style>
         * {
             margin: 0;
@@ -1282,6 +1294,34 @@
         }
 
         init();
+
+        // PWA: Register Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registered:', registration.scope);
+                    })
+                    .catch(err => {
+                        console.log('ServiceWorker registration failed:', err);
+                    });
+            });
+        }
+
+        // PWA: Install prompt handler
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            
+            // Show custom install button if desired
+            // For now, browser will show its own install prompt
+        });
+
+        window.addEventListener('appinstalled', () => {
+            console.log('PWA installed successfully');
+            deferredPrompt = null;
+        });
     </script>
 </body>
 </html>
