@@ -293,6 +293,85 @@
             margin-top: 5px;
         }
 
+        .portion-guide {
+            background: #1e3a5f;
+            border: 2px solid #3b82f6;
+            border-radius: 12px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .portion-guide:hover {
+            background: #1e4067;
+        }
+
+        .portion-guide-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .portion-guide-header h3 {
+            color: #60a5fa;
+            font-size: 1.1rem;
+            margin: 0;
+        }
+
+        .portion-guide-toggle {
+            color: #60a5fa;
+            font-size: 1.2rem;
+            transition: transform 0.3s;
+        }
+
+        .portion-guide-toggle.open {
+            transform: rotate(180deg);
+        }
+
+        .portion-guide-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .portion-guide-content.open {
+            max-height: 500px;
+            margin-top: 15px;
+        }
+
+        .portion-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(96, 165, 250, 0.2);
+        }
+
+        .portion-item:last-child {
+            border-bottom: none;
+        }
+
+        .portion-icon {
+            font-size: 1.5rem;
+            margin-right: 15px;
+            min-width: 30px;
+        }
+
+        .portion-text {
+            flex: 1;
+        }
+
+        .portion-measurement {
+            font-weight: bold;
+            color: #60a5fa;
+        }
+
+        .portion-description {
+            color: #a1a1aa;
+            font-size: 0.9rem;
+            margin-top: 2px;
+        }
+
         .chart-container {
             background: #1e1e2e;
             padding: 20px;
@@ -417,6 +496,50 @@
                 <div id="statusIndicator"></div>
             </div>
 
+            <div class="portion-guide" onclick="togglePortionGuide()">
+                <div class="portion-guide-header">
+                    <h3>📏 Portion Size Reference</h3>
+                    <span class="portion-guide-toggle" id="portionToggle">▼</span>
+                </div>
+                <div class="portion-guide-content" id="portionContent">
+                    <div class="portion-item">
+                        <div class="portion-icon">✊</div>
+                        <div class="portion-text">
+                            <div class="portion-measurement">Fist</div>
+                            <div class="portion-description">~1 cup volume = ~150-200g carbs/vegetables</div>
+                        </div>
+                    </div>
+                    <div class="portion-item">
+                        <div class="portion-icon">🤚</div>
+                        <div class="portion-text">
+                            <div class="portion-measurement">Palm</div>
+                            <div class="portion-description">Thickness + area = ~100-150g protein</div>
+                        </div>
+                    </div>
+                    <div class="portion-item">
+                        <div class="portion-icon">👍</div>
+                        <div class="portion-text">
+                            <div class="portion-measurement">Thumb</div>
+                            <div class="portion-description">~20-30g fats</div>
+                        </div>
+                    </div>
+                    <div class="portion-item">
+                        <div class="portion-icon">🤏</div>
+                        <div class="portion-text">
+                            <div class="portion-measurement">Handful</div>
+                            <div class="portion-description">~30-40g nuts/seeds</div>
+                        </div>
+                    </div>
+                    <div class="portion-item">
+                        <div class="portion-icon">🥄</div>
+                        <div class="portion-text">
+                            <div class="portion-measurement">Scoop (protein powder)</div>
+                            <div class="portion-description">~30g = ~1 heaping tablespoon</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="mode-toggle">
                 <button class="mode-btn active" onclick="switchInputMode('interactive')">🎯 Interactive</button>
                 <button class="mode-btn" onclick="switchInputMode('list')">📋 Quick List</button>
@@ -531,67 +654,89 @@
 
         const foodItems = {
             'Safe Proteins': {
-                'Fresh cottage cheese': 2,
-                'Fresh ricotta': 2,
-                'Very fresh eggs (<1 week)': 3,
-                'Fresh chicken (same day)': 3,
-                'Fresh beef (same day)': 3,
-                'Fresh turkey (same day)': 3,
-                'Sour cream (fresh)': 3,
-                'Ghee/butter': 2
-            },
-            'Moderate Proteins': {
-                'Cottage cheese (few days old)': 5,
-                'Eggs (1-2 weeks)': 5,
-                'Chicken (refrigerated 1 day)': 8,
+                'Fresh cottage cheese (palm-sized portion)': 4,
+                'Fresh ricotta (palm-sized portion)': 4,
+                'Very fresh eggs (2 eggs)': 4,
+                'Very fresh eggs (3 eggs)': 6,
+                'Fresh chicken (palm-sized)': 5,
+                'Fresh beef (palm-sized)': 5,
+                'Fresh turkey (palm-sized)': 5,
+                'Sour cream (2 tbsp)': 3,
+                'Ghee/butter (1 tbsp)': 2,
                 'Plant protein (1 scoop)': 5
             },
+            'Moderate Proteins': {
+                'Cottage cheese, few days old (palm-sized)': 8,
+                'Eggs, 1 week old (2 eggs)': 6,
+                'Eggs, 1 week old (3 eggs)': 9,
+                'Chicken, refrigerated 1 day (palm-sized)': 12,
+                'Plant protein (2 scoops)': 10
+            },
             'Risky Proteins': {
+                'Eggs, 1-2 weeks old (2 eggs)': 10,
+                'Eggs, 1-2 weeks old (3 eggs)': 15,
                 'Whey isolate (1 scoop)': 15,
                 'Whey isolate (2 scoops)': 30,
-                'Whey isolate (4-5 scoops)': 70,
-                'Chicken (refrigerated 2+ days)': 15,
-                'Restaurant protein': 30
+                'Whey isolate (3+ scoops)': 50,
+                'Chicken, refrigerated 2 days (palm-sized)': 25,
+                'Beef, refrigerated 2 days (palm-sized)': 25,
+                'Restaurant protein (palm-sized)': 35
             },
             'Carbs': {
-                'Rice': 1,
-                'Oats': 2,
-                'Pasta': 2,
-                'Sweet potato': 2,
-                'Bread': 3,
-                'Buckwheat': 2
+                'Rice (fist-sized cooked)': 2,
+                'Oats (fist-sized cooked)': 3,
+                'Pasta (fist-sized cooked)': 3,
+                'Sweet potato (fist-sized)': 4,
+                'White potato (fist-sized)': 3,
+                'Bread (1 slice)': 2,
+                'Bread (2 slices)': 4,
+                'Buckwheat (fist-sized cooked)': 3
             },
             'Fruits': {
-                'Apples': 2,
-                'Pears': 2,
-                'Blueberries': 3,
-                'Cherries': 3,
-                'Grapes': 3,
-                'Melon': 3
+                'Apple (1 medium)': 2,
+                'Pear (1 medium)': 2,
+                'Blueberries (handful)': 3,
+                'Cherries (handful)': 3,
+                'Grapes (handful)': 3,
+                'Melon (fist-sized portion)': 3,
+                'Banana (not too ripe)': 12
+            },
+            'Vegetables': {
+                'Cucumbers (fist-sized)': 1,
+                'Carrots (fist-sized)': 1,
+                'Broccoli (fist-sized)': 2,
+                'Cauliflower (fist-sized)': 2,
+                'Brussels sprouts (fist-sized)': 2,
+                'Zucchini (fist-sized)': 2,
+                'Bell peppers (1 pepper)': 2,
+                'Mixed vegetables (fist-sized)': 2
             },
             'Liberators (Avoid)': {
-                'Cocoa/chocolate': 30,
-                'Strawberries': 25,
-                'Citrus': 20,
-                'Tomatoes': 20,
-                'Spinach': 22,
-                'Avocado': 25,
-                'Walnuts': 25,
-                'Peanuts': 30,
-                'Almonds (small)': 10,
-                'Kiwi': 10,
-                'Banana (ripe)': 15
+                'Cocoa/chocolate (any amount)': 40,
+                'Strawberries (handful)': 30,
+                'Citrus (1 fruit)': 25,
+                'Tomatoes (1 medium or handful cherry)': 35,
+                'Spinach (fist-sized)': 30,
+                'Avocado (1/2 fruit)': 25,
+                'Walnuts (handful)': 35,
+                'Peanuts (handful)': 40,
+                'Almonds (small handful)': 15,
+                'Kiwi (1 fruit)': 15,
+                'Banana (very ripe)': 20
             },
             'Processed': {
-                'Commercial protein bar': 50,
-                'Restaurant meal': 30
+                'Commercial protein bar (1 bar)': 65,
+                'Restaurant meal (full plate)': 50,
+                'Restaurant meal (simple/safe)': 40,
+                'Fast food meal': 70,
+                'Takeout (unknown ingredients)': 55
             }
         };
 
         const activities = {
             'Exercise': {
                 'Light walk (30 min)': 5,
-                'Moderate cardio': 10,
+                'Moderate cardio (30-45 min)': 10,
                 'Light strength training': 10,
                 'Heavy strength training': 25,
                 'Intense cardio/HIIT': 25
@@ -600,7 +745,8 @@
                 'Hot shower (5-10 min)': 5,
                 'Hot shower (15+ min)': 15,
                 'Hot bath/sauna': 22,
-                'Cold exposure/ice bath': 17
+                'Cold exposure (winter walk)': 10,
+                'Ice bath/extreme cold': 17
             },
             'Sexual Activity': {
                 'Arousal (no orgasm)': 5,
@@ -609,11 +755,13 @@
             },
             'Medication': {
                 'NSAIDs (ibuprofen, aspirin)': 20,
-                'Antihistamine (H1 blocker)': -20
+                'Antihistamine H1 blocker (loratadine)': -20,
+                'Antihistamine H2 blocker (famotidine)': -20
             },
             'Other': {
-                'Coffee (1 cup)': 5,
-                'Coffee (2-3 cups)': 10
+                'Coffee (1 cup, 250ml)': 5,
+                'Coffee (2-3 cups)': 10,
+                'Coffee (4+ cups)': 15
             }
         };
 
@@ -1098,6 +1246,19 @@
                 renderActivityItems();
                 renderAllItems();
                 updateDisplay();
+            }
+        }
+
+        function togglePortionGuide() {
+            const content = document.getElementById('portionContent');
+            const toggle = document.getElementById('portionToggle');
+            
+            if (content.classList.contains('open')) {
+                content.classList.remove('open');
+                toggle.classList.remove('open');
+            } else {
+                content.classList.add('open');
+                toggle.classList.add('open');
             }
         }
 
