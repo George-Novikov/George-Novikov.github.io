@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Histamine Load Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e4e4e7;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        h1 {
+            color: #60a5fa;
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+        }
+
+        .date-picker-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        input[type="date"] {
+            background: #27293d;
+            border: 2px solid #3f3f46;
+            color: #e4e4e7;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+        }
+
+        .mode-toggle {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .mode-btn {
+            background: #27293d;
+            border: 2px solid #3f3f46;
+            color: #e4e4e7;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .mode-btn.active {
+            background: #3b82f6;
+            border-color: #60a5fa;
+        }
+
+        .capacity-display {
+            background: #27293d;
+            border: 2px solid #3f3f46;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .capacity-bar {
+            height: 30px;
+            background: #1e1e2e;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 10px 0;
+            position: relative;
+        }
+
+        .capacity-fill {
+            height: 100%;
+            transition: width 0.3s, background 0.3s;
+            border-radius: 15px;
+        }
+
+        .capacity-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .status-indicator {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .section {
+            background: #27293d;
+            border: 2px solid #3f3f46;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .section h2 {
+            color: #60a5fa;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .item-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .item-btn {
+            background: #1e1e2e;
+            border: 2px solid #3f3f46;
+            color: #e4e4e7;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: left;
+            transition: all 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .item-btn.selected {
+            background: #1e3a5f;
+            border-color: #3b82f6;
+        }
+
+        .item-label {
+            flex: 1;
+        }
+
+        .item-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .item-count {
+            background: #3b82f6;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .qty-btn {
+            background: #3b82f6;
+            border: none;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .qty-btn:hover {
+            background: #2563eb;
+        }
+
+        .qty-btn:active {
+            transform: scale(0.95);
+        }
+
+        .qty-btn.minus {
+            background: #ef4444;
+        }
+
+        .qty-btn.minus:hover {
+            background: #dc2626;
+        }
+
+        .question-section {
+            margin-bottom: 20px;
+        }
+
+        .question-section label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 500;
+            color: #a1a1aa;
+        }
+
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .radio-option {
+            background: #1e1e2e;
+            border: 2px solid #3f3f46;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .radio-option:hover {
+            background: #2a2a3e;
+            border-color: #60a5fa;
+        }
+
+        .radio-option input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        .radio-option.selected {
+            background: #1e3a5f;
+            border-color: #3b82f6;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: #1e1e2e;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid #3f3f46;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #60a5fa;
+        }
+
+        .stat-label {
+            color: #a1a1aa;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .chart-container {
+            background: #1e1e2e;
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid #3f3f46;
+            margin-top: 20px;
+        }
+
+        canvas {
+            max-width: 100%;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .save-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #10b981;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn {
+            background: #3b82f6;
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            background: #2563eb;
+        }
+
+        .btn-secondary {
+            background: #27293d;
+            border: 2px solid #3f3f46;
+        }
+
+        .btn-secondary:hover {
+            background: #2a2a3e;
+        }
+
+        .summary-section {
+            background: #1e1e2e;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #3f3f46;
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+
+        @media (max-width: 768px) {
+            .item-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .mode-toggle {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .mode-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="save-indicator" id="saveIndicator">✓ Auto-saved</div>
+        
+        <header>
+            <h1>🔬 Histamine Load Tracker</h1>
+            <div class="date-picker-container">
+                <input type="date" id="datePicker">
+            </div>
+        </header>
+
+        <div class="mode-toggle">
+            <button class="mode-btn active" onclick="switchMode('tracker')">📊 Tracker</button>
+            <button class="mode-btn" onclick="switchMode('statistics')">📈 Statistics</button>
+        </div>
+
+        <div id="trackerView">
+            <div class="capacity-display">
+                <h2>Daily Capacity</h2>
+                <div class="capacity-bar">
+                    <div class="capacity-fill" id="capacityFill"></div>
+                    <div class="capacity-text" id="capacityText">0 / 100</div>
+                </div>
+                <div id="statusIndicator"></div>
+            </div>
+
+            <div class="mode-toggle">
+                <button class="mode-btn active" onclick="switchInputMode('interactive')">🎯 Interactive</button>
+                <button class="mode-btn" onclick="switchInputMode('list')">📋 Quick List</button>
+            </div>
+
+            <div id="interactiveMode">
+                <div class="section">
+                    <h2>Sleep Quality</h2>
+                    <div class="question-section">
+                        <div class="radio-group" id="sleepGroup"></div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>Baseline Factors</h2>
+                    <div id="baselineFactors"></div>
+                </div>
+
+                <div class="section">
+                    <h2>Foods</h2>
+                    <div id="foodItems"></div>
+                </div>
+
+                <div class="section">
+                    <h2>Activities</h2>
+                    <div id="activityItems"></div>
+                </div>
+            </div>
+
+            <div id="listMode" style="display: none;">
+                <div class="section">
+                    <h2>All Items</h2>
+                    <input type="text" id="searchBox" placeholder="Search items..." style="width: 100%; padding: 12px; background: #1e1e2e; border: 2px solid #3f3f46; color: #e4e4e7; border-radius: 8px; margin-bottom: 15px;">
+                    <div id="allItems"></div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Summary</h2>
+                <div class="summary-section" id="summaryDisplay"></div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn btn-secondary" onclick="resetDay()">🔄 Reset Day</button>
+                <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">📥 Import Backup</button>
+                <button class="btn btn-secondary" onclick="exportData()">📤 Export Backup</button>
+                <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importData(event)">
+            </div>
+        </div>
+
+        <div id="statisticsView" style="display: none;">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="avgPoints">0</div>
+                    <div class="stat-label">Average Daily Points</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="safeDays">0</div>
+                    <div class="stat-label">Safe Days (Last 30)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="overflowDays">0</div>
+                    <div class="stat-label">Overflow Days (Last 30)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="streak">0</div>
+                    <div class="stat-label">Current Safe Streak</div>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <h2>30-Day Trend</h2>
+                <canvas id="trendChart"></canvas>
+            </div>
+
+            <div class="section">
+                <h2>Top Triggers</h2>
+                <div id="topTriggers"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const DATA_FILE = 'histamine-data.json';
+        
+        const sleepOptions = [
+            { label: '8+ hours, good', capacity: 100 },
+            { label: '6-8 hours, decent', capacity: 85 },
+            { label: '<6 hours, poor', capacity: 70 },
+            { label: '<4 hours, terrible', capacity: 50 }
+        ];
+
+        const baselineFactors = {
+            'Stress: Low': 0,
+            'Stress: Moderate': 10,
+            'Stress: High': 20,
+            'Stress: Extreme': 30,
+            'Allergies/Cold: Active': 20,
+            'Allergies/Cold: Sick': 30,
+            'Missed: Vitamin C': 10,
+            'Missed: Quercetin': 10,
+            'Missed: Magnesium': 5,
+            'Missed: B Vitamins': 5,
+            'Digestion: Bloating/gas': 5,
+            'Digestion: Constipation/diarrhea': 10,
+            'Digestion: Pain/inflammation': 15,
+            'Digestion: SIBO flare': 25,
+            'Temperature: Cold exposure': 10,
+            'Temperature: Heat exposure': 15,
+            'Temperature: Extreme shifts': 20
+        };
+
+        const foodItems = {
+            'Safe Proteins': {
+                'Fresh cottage cheese': 2,
+                'Fresh ricotta': 2,
+                'Very fresh eggs (<1 week)': 3,
+                'Fresh chicken (same day)': 3,
+                'Fresh beef (same day)': 3,
+                'Fresh turkey (same day)': 3,
+                'Sour cream (fresh)': 3,
+                'Ghee/butter': 2
+            },
+            'Moderate Proteins': {
+                'Cottage cheese (few days old)': 5,
+                'Eggs (1-2 weeks)': 5,
+                'Chicken (refrigerated 1 day)': 8,
+                'Plant protein (1 scoop)': 5
+            },
+            'Risky Proteins': {
+                'Whey isolate (1 scoop)': 15,
+                'Whey isolate (2 scoops)': 30,
+                'Whey isolate (4-5 scoops)': 70,
+                'Chicken (refrigerated 2+ days)': 15,
+                'Restaurant protein': 30
+            },
+            'Carbs': {
+                'Rice': 1,
+                'Oats': 2,
+                'Pasta': 2,
+                'Sweet potato': 2,
+                'Bread': 3,
+                'Buckwheat': 2
+            },
+            'Fruits': {
+                'Apples': 2,
+                'Pears': 2,
+                'Blueberries': 3,
+                'Cherries': 3,
+                'Grapes': 3,
+                'Melon': 3
+            },
+            'Liberators (Avoid)': {
+                'Cocoa/chocolate': 30,
+                'Strawberries': 25,
+                'Citrus': 20,
+                'Tomatoes': 20,
+                'Spinach': 22,
+                'Avocado': 25,
+                'Walnuts': 25,
+                'Peanuts': 30,
+                'Almonds (small)': 10,
+                'Kiwi': 10,
+                'Banana (ripe)': 15
+            },
+            'Processed': {
+                'Commercial protein bar': 50,
+                'Restaurant meal': 30
+            }
+        };
+
+        const activities = {
+            'Exercise': {
+                'Light walk (30 min)': 5,
+                'Moderate cardio': 10,
+                'Light strength training': 10,
+                'Heavy strength training': 25,
+                'Intense cardio/HIIT': 25
+            },
+            'Temperature': {
+                'Hot shower (5-10 min)': 5,
+                'Hot shower (15+ min)': 15,
+                'Hot bath/sauna': 22,
+                'Cold exposure/ice bath': 17
+            },
+            'Sexual Activity': {
+                'Arousal (no orgasm)': 5,
+                'Orgasm': 20,
+                'Multiple orgasms': 35
+            },
+            'Medication': {
+                'NSAIDs (ibuprofen, aspirin)': 20,
+                'Antihistamine (H1 blocker)': -20
+            },
+            'Other': {
+                'Coffee (1 cup)': 5,
+                'Coffee (2-3 cups)': 10
+            }
+        };
+
+        let histamineData = {};
+        let currentDate = new Date().toISOString().split('T')[0];
+        let currentDayData = {
+            sleepCapacity: 100,
+            baseline: {},
+            foods: {},
+            activities: {}
+        };
+
+        function init() {
+            document.getElementById('datePicker').value = currentDate;
+            loadData();
+            renderSleepOptions();
+            renderBaselineFactors();
+            renderFoodItems();
+            renderActivityItems();
+            renderAllItems();
+            updateDisplay();
+        }
+
+        function loadData() {
+            const stored = localStorage.getItem(DATA_FILE);
+            if (stored) {
+                histamineData = JSON.parse(stored);
+            }
+            if (histamineData[currentDate]) {
+                currentDayData = histamineData[currentDate];
+            } else {
+                currentDayData = {
+                    sleepCapacity: 100,
+                    baseline: {},
+                    foods: {},
+                    activities: {}
+                };
+            }
+        }
+
+        function autoSave() {
+            histamineData[currentDate] = currentDayData;
+            localStorage.setItem(DATA_FILE, JSON.stringify(histamineData));
+            
+            // Show save indicator
+            const indicator = document.getElementById('saveIndicator');
+            indicator.style.opacity = '1';
+            setTimeout(() => {
+                indicator.style.opacity = '0';
+            }, 1500);
+        }
+
+        function exportData() {
+            const blob = new Blob([JSON.stringify(histamineData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `histamine-export-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    
+                    // Validate the data structure
+                    if (typeof importedData !== 'object') {
+                        alert('Invalid backup file format');
+                        return;
+                    }
+                    
+                    // Ask user if they want to merge or replace
+                    const hasExistingData = Object.keys(histamineData).length > 0;
+                    let shouldMerge = false;
+                    
+                    if (hasExistingData) {
+                        shouldMerge = confirm(
+                            'You have existing data. Do you want to:\n\n' +
+                            'OK = Merge (keep existing data, add imported)\n' +
+                            'Cancel = Replace (delete existing, use only imported)'
+                        );
+                    }
+                    
+                    if (shouldMerge) {
+                        // Merge: imported data overwrites conflicts
+                        histamineData = { ...histamineData, ...importedData };
+                    } else {
+                        // Replace: use only imported data
+                        histamineData = importedData;
+                    }
+                    
+                    // Save to localStorage
+                    localStorage.setItem(DATA_FILE, JSON.stringify(histamineData));
+                    
+                    // Reload current day data
+                    loadData();
+                    renderSleepOptions();
+                    renderBaselineFactors();
+                    renderFoodItems();
+                    renderActivityItems();
+                    renderAllItems();
+                    updateDisplay();
+                    
+                    alert(`Successfully imported ${Object.keys(importedData).length} days of data!`);
+                    
+                } catch (error) {
+                    alert('Error importing file: ' + error.message);
+                }
+            };
+            
+            reader.readAsText(file);
+            
+            // Reset the file input so the same file can be imported again if needed
+            event.target.value = '';
+        }
+
+        function renderSleepOptions() {
+            const container = document.getElementById('sleepGroup');
+            container.innerHTML = sleepOptions.map((option, idx) => `
+                <label class="radio-option ${currentDayData.sleepCapacity === option.capacity ? 'selected' : ''}" onclick="selectSleep(${option.capacity})">
+                    <input type="radio" name="sleep" ${currentDayData.sleepCapacity === option.capacity ? 'checked' : ''}>
+                    ${option.label} (${option.capacity} points capacity)
+                </label>
+            `).join('');
+        }
+
+        function selectSleep(capacity) {
+            currentDayData.sleepCapacity = capacity;
+            renderSleepOptions();
+            updateDisplay();
+            autoSave();
+        }
+
+        function renderBaselineFactors() {
+            const container = document.getElementById('baselineFactors');
+            container.innerHTML = '<div class="item-grid">' + Object.entries(baselineFactors).map(([name, points]) => {
+                const count = currentDayData.baseline[name] || 0;
+                return `
+                    <div class="item-btn ${count > 0 ? 'selected' : ''}">
+                        <span class="item-label">${name} (+${points})</span>
+                        <div class="item-controls">
+                            ${count > 0 ? `
+                                <button class="qty-btn minus" onclick="event.stopPropagation(); changeBaseline('${name}', -1)">−</button>
+                                <span class="item-count">${count}</span>
+                            ` : ''}
+                            <button class="qty-btn" onclick="event.stopPropagation(); changeBaseline('${name}', 1)">+</button>
+                        </div>
+                    </div>
+                `;
+            }).join('') + '</div>';
+        }
+
+        function changeBaseline(name, delta) {
+            if (!currentDayData.baseline[name]) {
+                currentDayData.baseline[name] = 0;
+            }
+            currentDayData.baseline[name] += delta;
+            if (currentDayData.baseline[name] <= 0) {
+                delete currentDayData.baseline[name];
+            }
+            renderBaselineFactors();
+            updateDisplay();
+            autoSave();
+        }
+
+        function renderFoodItems() {
+            const container = document.getElementById('foodItems');
+            container.innerHTML = Object.entries(foodItems).map(([category, items]) => `
+                <h3 style="color: #a1a1aa; margin: 15px 0 10px 0; font-size: 1rem;">${category}</h3>
+                <div class="item-grid">
+                    ${Object.entries(items).map(([name, points]) => {
+                        const count = currentDayData.foods[name] || 0;
+                        return `
+                            <div class="item-btn ${count > 0 ? 'selected' : ''}">
+                                <span class="item-label">${name} (+${points})</span>
+                                <div class="item-controls">
+                                    ${count > 0 ? `
+                                        <button class="qty-btn minus" onclick="event.stopPropagation(); changeFood('${name}', -1)">−</button>
+                                        <span class="item-count">${count}</span>
+                                    ` : ''}
+                                    <button class="qty-btn" onclick="event.stopPropagation(); changeFood('${name}', 1)">+</button>
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `).join('');
+        }
+
+        function changeFood(name, delta) {
+            if (!currentDayData.foods[name]) {
+                currentDayData.foods[name] = 0;
+            }
+            currentDayData.foods[name] += delta;
+            if (currentDayData.foods[name] <= 0) {
+                delete currentDayData.foods[name];
+            }
+            renderFoodItems();
+            renderAllItems();
+            updateDisplay();
+            autoSave();
+        }
+
+        function addFood(name) {
+            changeFood(name, 1);
+        }
+
+        function renderActivityItems() {
+            const container = document.getElementById('activityItems');
+            container.innerHTML = Object.entries(activities).map(([category, items]) => `
+                <h3 style="color: #a1a1aa; margin: 15px 0 10px 0; font-size: 1rem;">${category}</h3>
+                <div class="item-grid">
+                    ${Object.entries(items).map(([name, points]) => {
+                        const count = currentDayData.activities[name] || 0;
+                        const sign = points >= 0 ? '+' : '';
+                        return `
+                            <div class="item-btn ${count > 0 ? 'selected' : ''}">
+                                <span class="item-label">${name} (${sign}${points})</span>
+                                <div class="item-controls">
+                                    ${count > 0 ? `
+                                        <button class="qty-btn minus" onclick="event.stopPropagation(); changeActivity('${name}', -1)">−</button>
+                                        <span class="item-count">${count}</span>
+                                    ` : ''}
+                                    <button class="qty-btn" onclick="event.stopPropagation(); changeActivity('${name}', 1)">+</button>
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `).join('');
+        }
+
+        function changeActivity(name, delta) {
+            if (!currentDayData.activities[name]) {
+                currentDayData.activities[name] = 0;
+            }
+            currentDayData.activities[name] += delta;
+            if (currentDayData.activities[name] <= 0) {
+                delete currentDayData.activities[name];
+            }
+            renderActivityItems();
+            renderAllItems();
+            updateDisplay();
+            autoSave();
+        }
+
+        function addActivity(name) {
+            changeActivity(name, 1);
+        }
+
+        function renderAllItems() {
+            const allItemsMap = {};
+            
+            Object.values(foodItems).forEach(category => {
+                Object.assign(allItemsMap, category);
+            });
+            Object.values(activities).forEach(category => {
+                Object.assign(allItemsMap, category);
+            });
+
+            const container = document.getElementById('allItems');
+            container.innerHTML = '<div class="item-grid">' + Object.entries(allItemsMap).map(([name, points]) => {
+                const foodCount = currentDayData.foods[name] || 0;
+                const activityCount = currentDayData.activities[name] || 0;
+                const count = foodCount + activityCount;
+                const sign = points >= 0 ? '+' : '';
+                return `
+                    <div class="item-btn ${count > 0 ? 'selected' : ''}">
+                        <span class="item-label">${name} (${sign}${points})</span>
+                        <div class="item-controls">
+                            ${count > 0 ? `
+                                <button class="qty-btn minus" onclick="event.stopPropagation(); changeItem('${name}', -1)">−</button>
+                                <span class="item-count">${count}</span>
+                            ` : ''}
+                            <button class="qty-btn" onclick="event.stopPropagation(); changeItem('${name}', 1)">+</button>
+                        </div>
+                    </div>
+                `;
+            }).join('') + '</div>';
+
+            const searchBox = document.getElementById('searchBox');
+            searchBox.oninput = function() {
+                const query = this.value.toLowerCase();
+                const buttons = container.querySelectorAll('.item-btn');
+                buttons.forEach(btn => {
+                    const text = btn.textContent.toLowerCase();
+                    btn.style.display = text.includes(query) ? 'flex' : 'none';
+                });
+            };
+        }
+
+        function changeItem(name, delta) {
+            let allItemsMap = {};
+            Object.values(foodItems).forEach(category => {
+                Object.assign(allItemsMap, category);
+            });
+            
+            const isFood = Object.values(foodItems).some(category => name in category);
+            
+            if (isFood) {
+                if (!currentDayData.foods[name]) {
+                    currentDayData.foods[name] = 0;
+                }
+                currentDayData.foods[name] += delta;
+                if (currentDayData.foods[name] <= 0) {
+                    delete currentDayData.foods[name];
+                }
+            } else {
+                if (!currentDayData.activities[name]) {
+                    currentDayData.activities[name] = 0;
+                }
+                currentDayData.activities[name] += delta;
+                if (currentDayData.activities[name] <= 0) {
+                    delete currentDayData.activities[name];
+                }
+            }
+            
+            renderFoodItems();
+            renderActivityItems();
+            renderAllItems();
+            updateDisplay();
+            autoSave();
+        }
+
+        function addItem(name) {
+            changeItem(name, 1);
+        }
+
+        function calculateTotal() {
+            let total = 0;
+            
+            Object.entries(currentDayData.baseline).forEach(([name, count]) => {
+                total += baselineFactors[name] * count;
+            });
+
+            Object.entries(currentDayData.foods).forEach(([name, count]) => {
+                Object.values(foodItems).forEach(category => {
+                    if (category[name]) {
+                        total += category[name] * count;
+                    }
+                });
+            });
+
+            Object.entries(currentDayData.activities).forEach(([name, count]) => {
+                Object.values(activities).forEach(category => {
+                    if (category[name]) {
+                        total += category[name] * count;
+                    }
+                });
+            });
+
+            return total;
+        }
+
+        function updateDisplay() {
+            const total = calculateTotal();
+            const capacity = currentDayData.sleepCapacity;
+            const percentage = Math.min((total / capacity) * 100, 100);
+            
+            const fill = document.getElementById('capacityFill');
+            const text = document.getElementById('capacityText');
+            const indicator = document.getElementById('statusIndicator');
+
+            text.textContent = `${total} / ${capacity}`;
+            fill.style.width = percentage + '%';
+
+            let status, color, statusText;
+            if (total <= 65) {
+                status = 'safe';
+                color = '#10b981';
+                statusText = '✅ Safe - No symptoms expected';
+            } else if (total <= 80) {
+                status = 'caution';
+                color = '#f59e0b';
+                statusText = '⚠️ Caution - Mild symptoms possible';
+            } else if (total <= 100) {
+                status = 'risk';
+                color = '#f97316';
+                statusText = '⚠️⚠️ Risk - Symptoms likely';
+            } else {
+                status = 'overflow';
+                color = '#ef4444';
+                statusText = '❌ Overflow - Symptoms guaranteed';
+            }
+
+            fill.style.background = color;
+            indicator.innerHTML = `<span class="status-indicator" style="background: ${color};">${statusText}</span>`;
+
+            renderSummary(total);
+        }
+
+        function renderSummary(total) {
+            const container = document.getElementById('summaryDisplay');
+            let html = '';
+
+            html += `<div class="summary-item"><strong>Sleep Capacity:</strong> <span>${currentDayData.sleepCapacity} points</span></div>`;
+
+            let baselineTotal = 0;
+            Object.entries(currentDayData.baseline).forEach(([name, count]) => {
+                baselineTotal += baselineFactors[name] * count;
+            });
+            if (baselineTotal > 0) {
+                html += `<div class="summary-item"><strong>Baseline Load:</strong> <span>${baselineTotal} points</span></div>`;
+            }
+
+            let foodTotal = 0;
+            Object.entries(currentDayData.foods).forEach(([name, count]) => {
+                Object.values(foodItems).forEach(category => {
+                    if (category[name]) {
+                        foodTotal += category[name] * count;
+                    }
+                });
+            });
+            if (foodTotal > 0) {
+                html += `<div class="summary-item"><strong>Food Load:</strong> <span>${foodTotal} points</span></div>`;
+            }
+
+            let activityTotal = 0;
+            Object.entries(currentDayData.activities).forEach(([name, count]) => {
+                Object.values(activities).forEach(category => {
+                    if (category[name]) {
+                        activityTotal += category[name] * count;
+                    }
+                });
+            });
+            if (activityTotal !== 0) {
+                html += `<div class="summary-item"><strong>Activity Load:</strong> <span>${activityTotal} points</span></div>`;
+            }
+
+            html += `<div class="summary-item" style="margin-top: 10px; padding-top: 10px; border-top: 2px solid #3f3f46;"><strong>Total Load:</strong> <span style="color: #60a5fa; font-size: 1.2rem;">${total} points</span></div>`;
+
+            container.innerHTML = html;
+        }
+
+        function switchMode(mode) {
+            document.querySelectorAll('.mode-toggle .mode-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            if (mode === 'tracker') {
+                document.getElementById('trackerView').style.display = 'block';
+                document.getElementById('statisticsView').style.display = 'none';
+            } else {
+                document.getElementById('trackerView').style.display = 'none';
+                document.getElementById('statisticsView').style.display = 'block';
+                renderStatistics();
+            }
+        }
+
+        function switchInputMode(mode) {
+            const buttons = document.querySelectorAll('#trackerView .mode-toggle .mode-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            if (mode === 'interactive') {
+                document.getElementById('interactiveMode').style.display = 'block';
+                document.getElementById('listMode').style.display = 'none';
+            } else {
+                document.getElementById('interactiveMode').style.display = 'none';
+                document.getElementById('listMode').style.display = 'block';
+            }
+        }
+
+        function resetDay() {
+            if (confirm('Are you sure you want to reset today\'s data?')) {
+                currentDayData = {
+                    sleepCapacity: 100,
+                    baseline: {},
+                    foods: {},
+                    activities: {}
+                };
+                renderSleepOptions();
+                renderBaselineFactors();
+                renderFoodItems();
+                renderActivityItems();
+                renderAllItems();
+                updateDisplay();
+            }
+        }
+
+        document.getElementById('datePicker').addEventListener('change', function() {
+            currentDate = this.value;
+            loadData();
+            renderSleepOptions();
+            renderBaselineFactors();
+            renderFoodItems();
+            renderActivityItems();
+            renderAllItems();
+            updateDisplay();
+        });
+
+        function renderStatistics() {
+            const dates = Object.keys(histamineData).sort().reverse();
+            const last30Days = dates.slice(0, 30);
+            
+            let totalPoints = 0;
+            let safeDays = 0;
+            let overflowDays = 0;
+            
+            last30Days.forEach(date => {
+                const dayData = histamineData[date];
+                let total = 0;
+                
+                Object.entries(dayData.baseline || {}).forEach(([name, count]) => {
+                    total += (baselineFactors[name] || 0) * count;
+                });
+                
+                Object.entries(dayData.foods || {}).forEach(([name, count]) => {
+                    Object.values(foodItems).forEach(category => {
+                        if (category[name]) {
+                            total += category[name] * count;
+                        }
+                    });
+                });
+                
+                Object.entries(dayData.activities || {}).forEach(([name, count]) => {
+                    Object.values(activities).forEach(category => {
+                        if (category[name]) {
+                            total += category[name] * count;
+                        }
+                    });
+                });
+                
+                totalPoints += total;
+                if (total <= 65) safeDays++;
+                if (total > 100) overflowDays++;
+            });
+            
+            document.getElementById('avgPoints').textContent = last30Days.length > 0 ? Math.round(totalPoints / last30Days.length) : 0;
+            document.getElementById('safeDays').textContent = safeDays;
+            document.getElementById('overflowDays').textContent = overflowDays;
+            
+            let streak = 0;
+            for (let i = 0; i < dates.length; i++) {
+                const dayData = histamineData[dates[i]];
+                let total = 0;
+                
+                Object.entries(dayData.baseline || {}).forEach(([name, count]) => {
+                    total += (baselineFactors[name] || 0) * count;
+                });
+                
+                Object.entries(dayData.foods || {}).forEach(([name, count]) => {
+                    Object.values(foodItems).forEach(category => {
+                        if (category[name]) total += category[name] * count;
+                    });
+                });
+                
+                Object.entries(dayData.activities || {}).forEach(([name, count]) => {
+                    Object.values(activities).forEach(category => {
+                        if (category[name]) total += category[name] * count;
+                    });
+                });
+                
+                if (total <= 65) {
+                    streak++;
+                } else {
+                    break;
+                }
+            }
+            document.getElementById('streak').textContent = streak;
+            
+            renderChart(last30Days);
+            renderTopTriggers();
+        }
+
+        function renderChart(dates) {
+            const canvas = document.getElementById('trendChart');
+            const ctx = canvas.getContext('2d');
+            
+            canvas.width = canvas.offsetWidth;
+            canvas.height = 300;
+            
+            const data = dates.reverse().map(date => {
+                const dayData = histamineData[date];
+                let total = 0;
+                
+                Object.entries(dayData.baseline || {}).forEach(([name, count]) => {
+                    total += (baselineFactors[name] || 0) * count;
+                });
+                
+                Object.entries(dayData.foods || {}).forEach(([name, count]) => {
+                    Object.values(foodItems).forEach(category => {
+                        if (category[name]) total += category[name] * count;
+                    });
+                });
+                
+                Object.entries(dayData.activities || {}).forEach(([name, count]) => {
+                    Object.values(activities).forEach(category => {
+                        if (category[name]) total += category[name] * count;
+                    });
+                });
+                
+                return total;
+            });
+            
+            const maxValue = Math.max(...data, 100);
+            const padding = 40;
+            const chartWidth = canvas.width - padding * 2;
+            const chartHeight = canvas.height - padding * 2;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.strokeStyle = '#3f3f46';
+            ctx.lineWidth = 1;
+            [0, 65, 80, 100].forEach(threshold => {
+                const y = padding + chartHeight - (threshold / maxValue) * chartHeight;
+                ctx.beginPath();
+                ctx.moveTo(padding, y);
+                ctx.lineTo(canvas.width - padding, y);
+                ctx.stroke();
+                
+                ctx.fillStyle = '#a1a1aa';
+                ctx.font = '12px sans-serif';
+                ctx.fillText(threshold, 5, y + 4);
+            });
+            
+            if (data.length > 0) {
+                ctx.strokeStyle = '#60a5fa';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                
+                data.forEach((value, i) => {
+                    const x = padding + (i / (data.length - 1)) * chartWidth;
+                    const y = padding + chartHeight - (value / maxValue) * chartHeight;
+                    
+                    if (i === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                });
+                
+                ctx.stroke();
+                
+                ctx.fillStyle = '#60a5fa';
+                data.forEach((value, i) => {
+                    const x = padding + (i / (data.length - 1)) * chartWidth;
+                    const y = padding + chartHeight - (value / maxValue) * chartHeight;
+                    
+                    ctx.beginPath();
+                    ctx.arc(x, y, 4, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+            }
+        }
+
+        function renderTopTriggers() {
+            const triggers = {};
+            
+            Object.values(histamineData).forEach(dayData => {
+                Object.entries(dayData.foods || {}).forEach(([name, count]) => {
+                    if (!triggers[name]) triggers[name] = 0;
+                    triggers[name] += count;
+                });
+                
+                Object.entries(dayData.activities || {}).forEach(([name, count]) => {
+                    if (!triggers[name]) triggers[name] = 0;
+                    triggers[name] += count;
+                });
+            });
+            
+            const sorted = Object.entries(triggers).sort((a, b) => b[1] - a[1]).slice(0, 10);
+            
+            const container = document.getElementById('topTriggers');
+            container.innerHTML = '<div class="summary-section">' + sorted.map(([name, count]) => `
+                <div class="summary-item">
+                    <strong>${name}</strong>
+                    <span>${count}x</span>
+                </div>
+            `).join('') + '</div>';
+        }
+
+        init();
+    </script>
+</body>
+</html>
