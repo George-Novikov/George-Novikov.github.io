@@ -3,6 +3,7 @@
   "short_name": "Histamine",
   "description": "Track your daily histamine load and manage symptoms",
   "start_url": "/histamine-tracker/",
+  "scope": "/histamine-tracker/",
   "display": "standalone",
   "background_color": "#1a1a2e",
   "theme_color": "#60a5fa",

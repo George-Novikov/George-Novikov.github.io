@@ -1,7 +1,10 @@
 const CACHE_NAME = 'histamine-tracker-v1';
 const urlsToCache = [
   '/histamine-tracker/',
-  '/histamine-tracker/index.html'
+  '/histamine-tracker/index.html',
+  '/histamine-tracker/manifest.json',
+  '/histamine-tracker/icon-192.png',
+  '/histamine-tracker/icon-512.png'
 ];
 
 // Install event - cache resources
