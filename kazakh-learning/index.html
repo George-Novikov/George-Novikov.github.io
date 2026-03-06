@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="theme-color" content="#0e0c08">
+        <meta name="description" content="Daily Kazakh language drill — advanced production exercises">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+        <meta name="apple-mobile-web-app-title" content="Қазақша">
+        <link rel="manifest" href="manifest.json">
+        <link rel="icon" href="icon-192.png">
+        <link rel="apple-touch-icon" href="icon-192.png">
+        <title>Қазақ Тілін Үйрену</title>
+        <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+        <style>
+  :root {
+    --bg: #f5f0e8;
+    --bg2: #ede8df;
+    --surface: #ffffff;
+    --border: #d4ccbc;
+    --border-dark: #b0a898;
+    --ink: #1a1710;
+    --ink-mid: #5a5448;
+    --ink-faint: #a09888;
+    --red: #8b2020;
+    --red-bg: #fdf0f0;
+    --green: #1a5c35;
+    --green-bg: #f0f7f3;
+    --gold: #7a5c1e;
+    --gold-bg: #fdf8ee;
+    --blue: #1a3a5c;
+    --blue-bg: #f0f4f9;
+    --radius: 10px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'IBM Plex Sans', sans-serif;
+    min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 0 16px 80px;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: repeating-linear-gradient(transparent, transparent 31px, rgba(180,160,120,0.15) 31px, rgba(180,160,120,0.15) 32px);
+    pointer-events: none; z-index: 0;
+  }
+  header {
+    width: 100%; max-width: 640px;
+    padding: 40px 0 20px;
+    border-bottom: 2px solid var(--ink);
+    margin-bottom: 28px;
+    position: relative; z-index: 1;
+    display: flex; justify-content: space-between; align-items: flex-end;
+  }
+  .header-title { font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 600; letter-spacing: -0.5px; line-height: 1; }
+  .header-title span { font-style: italic; font-weight: 400; font-size: 14px; color: var(--ink-mid); display: block; font-family: 'IBM Plex Mono', monospace; margin-top: 4px; }
+  .streak { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--ink-mid); text-align: right; }
+  .streak strong { color: var(--ink); font-size: 20px; display: block; font-family: 'Cormorant Garamond', serif; font-weight: 600; }
+
+  .mode-tabs { width: 100%; max-width: 640px; display: flex; gap: 0; margin-bottom: 20px; position: relative; z-index: 1; border: 1px solid var(--border-dark); border-radius: var(--radius); overflow: hidden; }
+  .mode-tab { flex: 1; padding: 9px 8px; background: var(--bg2); color: var(--ink-faint); font-family: 'IBM Plex Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; text-align: center; border-right: 1px solid var(--border); transition: background 0.15s, color 0.15s; user-select: none; }
+  .mode-tab:last-child { border-right: none; }
+  .mode-tab.active { background: var(--ink); color: var(--bg); }
+
+  .progress-wrap { width: 100%; max-width: 640px; margin-bottom: 20px; position: relative; z-index: 1; }
+  .progress-meta { display: flex; justify-content: space-between; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--ink-faint); margin-bottom: 7px; }
+  .progress-bar { height: 2px; background: var(--border); }
+  .progress-fill { height: 100%; background: var(--ink); transition: width 0.4s ease; }
+
+  .card { width: 100%; max-width: 640px; background: var(--surface); border: 1px solid var(--border-dark); border-radius: var(--radius); padding: 32px 36px 28px; position: relative; z-index: 1; box-shadow: 0 2px 0 var(--border-dark), 0 4px 16px rgba(0,0,0,0.06); animation: cardIn 0.3s ease; }
+  @keyframes cardIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+
+  .q-type-badge { display: inline-block; font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--ink-faint); border: 1px solid var(--border); border-radius: 4px; padding: 3px 8px; margin-bottom: 18px; }
+  .q-text { font-family: 'Cormorant Garamond', serif; font-size: 22px; line-height: 1.55; color: var(--ink); margin-bottom: 8px; }
+  .q-text em { font-style: italic; color: var(--gold); }
+  .q-subtext { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--ink-faint); line-height: 1.6; margin-bottom: 22px; }
+  .source-tag { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--ink-faint); background: var(--bg2); border: 1px solid var(--border); border-radius: 4px; padding: 2px 8px; margin-bottom: 14px; display: inline-block; }
+
+  .word-bank { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; padding: 14px; background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; }
+  .word-bank-label { width: 100%; font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 4px; }
+  .word-token { font-family: 'IBM Plex Mono', monospace; font-size: 13px; background: var(--surface); border: 1px solid var(--border-dark); border-radius: 5px; padding: 5px 12px; color: var(--ink); }
+  .word-token small { font-size: 10px; opacity: 0.5; }
+
+  .hint-row { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .hint-toggle { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--ink-faint); background: none; border: 1px solid var(--border); border-radius: 5px; padding: 4px 10px; cursor: pointer; transition: color 0.15s, border-color 0.15s; }
+  .hint-toggle:hover { color: var(--gold); border-color: var(--gold); }
+  .hint-text { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--gold); display: none; line-height: 1.5; }
+  .hint-text.on { display: block; }
+
+  textarea, input[type=text] { width: 100%; font-family: 'IBM Plex Mono', monospace; font-size: 15px; line-height: 1.6; color: var(--ink); background: var(--bg2); border: 1px solid var(--border-dark); border-radius: 8px; padding: 14px 16px; outline: none; resize: none; transition: border-color 0.2s, background 0.2s; }
+  textarea:focus, input[type=text]:focus { border-color: var(--ink); background: #fff; }
+  textarea.ok, input[type=text].ok   { border-color: var(--green); background: var(--green-bg); }
+  textarea.err, input[type=text].err { border-color: var(--red);   background: var(--red-bg); }
+
+  .feedback { margin-top: 14px; padding: 14px 16px; border-radius: 8px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; line-height: 1.7; display: none; }
+  .feedback.on { display: block; }
+  .feedback.ok  { background: var(--green-bg); border: 1px solid #8fc4a8; color: var(--green); }
+  .feedback.err { background: var(--red-bg);   border: 1px solid #d4a0a0; color: var(--red); }
+  .feedback .answer { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-style: italic; color: var(--ink); display: block; margin-bottom: 4px; }
+  .feedback .exp { color: var(--ink-mid); font-size: 11px; }
+
+  .grammar-note { margin-top: 12px; padding: 10px 14px; background: var(--gold-bg); border-left: 3px solid var(--gold); border-radius: 0 6px 6px 0; font-family: 'IBM Plex Mono', monospace; font-size: 11px; line-height: 1.7; color: var(--ink-mid); display: none; }
+  .grammar-note.on { display: block; }
+  .grammar-note strong { color: var(--gold); }
+
+  .error-sentence { font-family: 'Cormorant Garamond', serif; font-size: 24px; font-style: italic; color: var(--ink); line-height: 1.5; padding: 16px 0 20px; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
+  .error-sentence .underline { text-decoration: underline; text-decoration-color: var(--red); text-decoration-style: wavy; }
+
+  .suffix-chain { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin: 16px 0; }
+  .suffix-step { font-family: 'IBM Plex Mono', monospace; font-size: 13px; background: var(--bg2); border: 1px solid var(--border); border-radius: 5px; padding: 5px 10px; color: var(--ink); }
+  .suffix-step.added { background: var(--gold-bg); border-color: var(--gold); color: var(--gold); }
+  .suffix-arrow { color: var(--ink-faint); font-size: 12px; }
+
+  .btn-row { display: flex; gap: 10px; margin-top: 22px; }
+  .btn { padding: 12px 22px; border-radius: 8px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.5px; cursor: pointer; border: none; transition: opacity 0.15s, transform 0.1s; }
+  .btn:hover { opacity: 0.85; transform: translateY(-1px); }
+  .btn-primary { background: var(--ink); color: var(--bg); flex: 1; }
+  .btn-secondary { background: var(--bg2); color: var(--ink-mid); border: 1px solid var(--border-dark); }
+  .btn-check { background: var(--blue-bg); color: var(--blue); border: 1px solid #a0b8d4; flex: 1; }
+
+  .fc-wrap { perspective: 900px; cursor: pointer; margin-bottom: 6px; }
+  .fc-inner { position: relative; height: 160px; transform-style: preserve-3d; transition: transform 0.55s cubic-bezier(0.4,0,0.2,1); border-radius: 8px; }
+  .fc-inner.flipped { transform: rotateY(180deg); }
+  .fc-face { position: absolute; inset: 0; backface-visibility: hidden; border-radius: 8px; border: 1px solid var(--border-dark); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; text-align: center; background: var(--bg2); }
+  .fc-back { transform: rotateY(180deg); background: var(--gold-bg); border-color: var(--gold); }
+  .fc-kz { font-family: 'Cormorant Garamond', serif; font-size: 36px; font-style: italic; color: var(--ink); margin-bottom: 4px; }
+  .fc-rom { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--ink-faint); }
+  .fc-en { font-family: 'Cormorant Garamond', serif; font-size: 24px; color: var(--ink); margin-bottom: 6px; }
+  .fc-ctx { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--ink-faint); font-style: italic; }
+  .tap-hint { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--ink-faint); text-align: center; margin-bottom: 12px; letter-spacing: 1px; }
+  .self-row { display: flex; gap: 10px; margin-top: 22px; }
+  .btn-knew { background: var(--green-bg); color: var(--green); border: 1px solid #8fc4a8; flex: 1; font-family: 'IBM Plex Mono', monospace; font-size: 12px; padding: 12px; border-radius: 8px; cursor: pointer; }
+  .btn-didnt { background: var(--red-bg); color: var(--red); border: 1px solid #d4a0a0; flex: 1; font-family: 'IBM Plex Mono', monospace; font-size: 12px; padding: 12px; border-radius: 8px; cursor: pointer; }
+
+  .done { display: none; flex-direction: column; align-items: center; text-align: center; width: 100%; max-width: 640px; padding: 48px 24px; position: relative; z-index: 1; }
+  .done.on { display: flex; }
+  .done-title { font-family: 'Cormorant Garamond', serif; font-size: 48px; font-style: italic; color: var(--ink); margin-bottom: 6px; }
+  .done-sub { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--ink-faint); margin-bottom: 36px; line-height: 1.7; }
+  .done-scores { display: flex; gap: 16px; margin-bottom: 36px; }
+  .done-score { background: var(--surface); border: 1px solid var(--border-dark); border-radius: var(--radius); padding: 20px 28px; box-shadow: 0 2px 0 var(--border-dark); }
+  .done-score .n { font-family: 'Cormorant Garamond', serif; font-size: 44px; font-weight: 600; display: block; color: var(--ink); }
+  .done-score .l { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 1.5px; }
+
+  #install-banner { display: none; position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); background: var(--ink); color: var(--bg); font-family: 'IBM Plex Mono', monospace; font-size: 12px; padding: 12px 20px; border-radius: 8px; z-index: 100; gap: 14px; align-items: center; box-shadow: 0 4px 20px rgba(0,0,0,0.3); max-width: 360px; width: calc(100% - 32px); }
+  #install-banner.on { display: flex; }
+  #install-banner button { background: var(--gold-bg); color: var(--gold); border: none; border-radius: 5px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; padding: 6px 12px; cursor: pointer; white-space: nowrap; }
+  #install-banner .dismiss { background: none; color: var(--ink-faint); padding: 4px; }
+
+  @media (max-width: 480px) {
+    .card { padding: 22px 18px 20px; }
+    .q-text { font-size: 18px; }
+    .done-scores { flex-direction: column; gap: 10px; }
+    .mode-tab { font-size: 9px; padding: 8px 4px; }
+    header { padding-top: 24px; }
+  }
+        </style>
+    </head>
+    <body>
+        <header>
+            <div class="header-title">
+                Қазақша
+                <span>Advanced Production Drill</span>
+            </div>
+            <div class="streak">
+                <strong id="streak-n">1</strong>
+                day streak
+            </div>
+        </header>
+        <div class="mode-tabs">
+            <div class="mode-tab active" onclick="setMode('mixed')">Mixed</div>
+            <div class="mode-tab" onclick="setMode('sentence')">Sentences</div>
+            <div class="mode-tab" onclick="setMode('suffix')">Suffixes</div>
+            <div class="mode-tab" onclick="setMode('error')">Errors</div>
+            <div class="mode-tab" onclick="setMode('lotr')">LotR</div>
+            <div class="mode-tab" onclick="setMode('flash')">Flash</div>
+        </div>
+        <div class="progress-wrap" id="prog-wrap">
+            <div class="progress-meta">
+                <span id="q-counter">1 / 10</span>
+                <span id="score-live">0 correct</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="prog-fill" style="width:0%"></div>
+            </div>
+        </div>
+        <div class="card" id="card"></div>
+        <div class="done" id="done">
+            <div class="done-title">Жарайсың.</div>
+            <div class="done-sub">Session complete, George.
+                <br>Every sentence you produce is a deposit — come back tomorrow.
+            </div>
+            <div class="done-scores">
+                <div class="done-score">
+                    <span class="n" id="d-correct">0</span>
+                    <span class="l">Correct</span>
+                </div>
+                <div class="done-score">
+                    <span class="n" id="d-total">10</span>
+                    <span class="l">Total</span>
+                </div>
+                <div class="done-score">
+                    <span class="n" id="d-pct">0%</span>
+                    <span class="l">Accuracy</span>
+                </div>
+            </div>
+            <button class="btn btn-primary" style="max-width:260px" onclick="restart()">New Session →</button>
+        </div>
+        <div id="install-banner">
+            <span>Install app for daily use</span>
+            <button onclick="installApp()">Add to Home</button>
+            <button class="dismiss" onclick="document.getElementById('install-banner').classList.remove('on')">✕</button>
+        </div>
+        <script>
+// ═══════════════════════════════════════════════
+// DATA BANKS
+// ═══════════════════════════════════════════════
+
+// ── Sentence Builder ──────────────────────────
+const sentenceBank = [
+  {
+    type:'sentence',
+    instruction:'Build: <em>"I am going to the market today."</em>',
+    words:['мен','базар','бүгін','бар-'],
+    labels:['I','market (add -ға)','today','go (present 1sg)'],
+    answers:['Мен бүгін базарға барамын','Бүгін мен базарға барамын','мен бүгін базарға барамын'],
+    hint:'базар+-ға (dative). бар+-амын (present 1sg).',
+    explanation:'Мен бүгін базарға барамын.',
+    grammar:'Dative -ға/-ге marks direction toward. бар→барамын (бар+а+мын). Present: stem+а/е+person.'
+  },
+  {
+    type:'sentence',
+    instruction:'Build: <em>"The hobbits lived peacefully in the Shire."</em>',
+    words:['хоббиттер','Шир','тыныш','өмір сүр-'],
+    labels:['hobbits (plural)','Shire (add -де)','peacefully','live (past 3pl)'],
+    answers:['Хоббиттер Ширде тыныш өмір сүрді','хоббиттер Ширде тыныш өмір сүрді'],
+    hint:'Шир+-де (locative, front vowel). өмір сүр+-ді (past 3pl — same as 3sg in Kazakh past).',
+    explanation:'Хоббиттер Ширде тыныш өмір сүрді.',
+    grammar:'Past 3rd person (sg and pl) = stem+-ды/-ді. No extra suffix. өмір сүрді = lived (he/she/they).'
+  },
+  {
+    type:'sentence',
+    instruction:'From the prologue: <em>"This people loved peace and quiet life."</em>',
+    words:['бұл халық','бейбітшілік','тыныш өмір','жақсы көр-'],
+    labels:['this people','peace (accusative -ті)','quiet life (accusative)','love (past 3sg)'],
+    answers:['Бұл халық бейбітшілікті, тыныш өмірді жақсы көрді','бұл халық бейбітшілікті тыныш өмірді жақсы көрді'],
+    hint:'Accusative -ні/-ті/-ды marks direct objects. жақсы көру = to love (lit. "to see well").',
+    explanation:'Бұл халық бейбітшілікті, тыныш өмір сүруді жақсы көрді.',
+    grammar:'жақсы көру is a compound verb: жақсы (well/good) + көру (to see). Many Kazakh verbs work this way.'
+  },
+  {
+    type:'sentence',
+    instruction:'Build: <em>"The old man lives in the city."</em>',
+    words:['қарт адам','қала','тұр-'],
+    labels:['old man','city (add -да)','live (present 3sg)'],
+    answers:['Қарт адам қалада тұрады','қарт адам қалада тұрады'],
+    hint:'қала+-да (locative). тұр+-ады (present 3sg).',
+    explanation:'Қарт адам қалада тұрады.',
+    grammar:'3sg present: stem+-ады/-еді. Compare: барамын (I go) vs барады (he goes).'
+  },
+  {
+    type:'sentence',
+    instruction:'Build: <em>"We did not find the road."</em>',
+    words:['біз','жол','тап-'],
+    labels:['we','road (accusative -ды)','find (negative past 1pl)'],
+    answers:['Біз жолды таппадық','біз жолды таппадық','Жолды таппадық'],
+    hint:'тап+па (neg)+ды+қ = таппадық. жол+-ды (accusative).',
+    explanation:'Біз жолды таппадық.',
+    grammar:'Negative past: stem+-ма/-па+-ды+person. тап→таппадық (1pl). Note double п.'
+  },
+  {
+    type:'sentence',
+    instruction:'Answer in Kazakh: <em>"Сіз қайдан келдіңіз?"</em> — say you came from Moscow.',
+    words:['Мәскеу','кел-'],
+    labels:['Moscow (add -ден)','come (past 1sg)'],
+    answers:['Мен Мәскеуден келдім','мен Мәскеуден келдім','Мәскеуден келдім'],
+    hint:'Мәскеу+-ден (ablative, front vowels). кел+-дім (past 1sg).',
+    explanation:'Мен Мәскеуден келдім.',
+    grammar:'Ablative -дан/-ден/-тан/-тен = from. Front vowels → -ден.'
+  },
+  {
+    type:'sentence',
+    instruction:'From the prologue: <em>"Hobbits are a very ancient people."</em>',
+    words:['хоббиттер','өте ежелгі','халық'],
+    labels:['hobbits','very ancient','people'],
+    answers:['Хоббиттер өте ежелгі халық','хоббиттер өте ежелгі халық'],
+    hint:'No verb needed — zero copula. Subject + predicate = complete sentence.',
+    explanation:'Хоббиттер өте ежелгі халық.',
+    grammar:'Nominal sentences omit "to be". This exact phrase appears in the prologue you read!'
+  },
+  {
+    type:'sentence',
+    instruction:'Build: <em>"I have been learning Kazakh for three and a half years."</em>',
+    words:['мен','қазақша','үш жарым жыл','үйрен-'],
+    labels:['I','Kazakh','three and a half years (add -дан бері)','learn (continuous present)'],
+    answers:['Мен үш жарым жылдан бері қазақша үйреніп жатырмын','Үш жарым жылдан бері қазақша үйреніп жатырмын'],
+    hint:'үш жарым жыл+-дан бері = for 3.5 years. үйрен+-іп жатырмын = continuous present.',
+    explanation:'Мен үш жарым жылдан бері қазақша үйреніп жатырмын.',
+    grammar:'Duration: [time]-дан бері = "for [time]". Continuous: verb+-іп/-ып жатырмын.'
+  },
+];
+
+// ── Suffix Chains ──────────────────────────────
+const suffixBank = [
+  {
+    type:'suffix',
+    instruction:'<em>жол</em> (road). Apply: 1) plural, 2) my (possessive), 3) dative.',
+    root:'жол',
+    steps:['plural -дар','possessive 1sg -ым','dative -а'],
+    answers:['жолдарыма'],
+    hint:'жол→жолдар→жолдарым→жолдарыма',
+    explanation:'жолдарыма — "to my roads".',
+    grammar:'Suffix order: ROOT+[plural]+[possessive]+[case]. Never rearrange.'
+  },
+  {
+    type:'suffix',
+    instruction:'<em>халық</em> (people, from prologue). Apply: 1) genitive (of), 2) 3sg possessive.',
+    root:'халық',
+    steps:['genitive -тың','3sg possessive -ы'],
+    answers:['халықтың тарихы','халықтың'],
+    hint:'халық+-тың (genitive, unvoiced қ). Result: халықтың. Then next noun takes -ы.',
+    explanation:'халықтың тарихы = the history of the people.',
+    grammar:'Genitive chain: [noun]-тың/дің + [next noun]-ы/-і. The second noun takes 3sg possessive.'
+  },
+  {
+    type:'suffix',
+    instruction:'<em>үй</em> (house). Apply: 1) your (2sg possessive), 2) locative.',
+    root:'үй',
+    steps:['possessive 2sg -ің','locative -де'],
+    answers:['үйіңде'],
+    hint:'үй+-ің=үйің, then +-де=үйіңде.',
+    explanation:'үйіңде — "at your house".',
+    grammar:'үйімде (my) / үйіңде (your) / үйінде (his/her). Learn the three together.'
+  },
+  {
+    type:'suffix',
+    instruction:'<em>оқы-</em> (to read). Apply: 1) negative, 2) past tense, 3) 3sg.',
+    root:'оқы-',
+    steps:['negative -ма','past -ды','3sg (no suffix)'],
+    answers:['оқымады'],
+    hint:'оқы+ма+ды = оқымады. 3sg past needs no person suffix.',
+    explanation:'оқымады — "he/she did not read".',
+    grammar:'Negative past 3sg: stem+-ма/-ме+-ды/-ді. Simplest form.'
+  },
+  {
+    type:'suffix',
+    instruction:'<em>бейбітшілік</em> (peace, from prologue). Apply: 1) accusative (direct object).',
+    root:'бейбітшілік',
+    steps:['accusative -ті'],
+    answers:['бейбітшілікті'],
+    hint:'Front vowels → -ті (not -ды). бейбітшілік ends in қ (unvoiced) but front vowels dominate.',
+    explanation:'бейбітшілікті — "peace" as a direct object. Exact form from the prologue.',
+    grammar:'Accusative marks the direct object: кітапты оқыдым (I read the book), бейбітшілікті жақсы көрді (loved peace).'
+  },
+  {
+    type:'suffix',
+    instruction:'<em>дос</em> (friend). Apply: 1) abstract noun suffix, 2) without (privative).',
+    root:'дос',
+    steps:['abstract -тық','privative -сыз'],
+    answers:['достықсыз'],
+    hint:'дос→достық→достықсыз.',
+    explanation:'достықсыз — "without friendship".',
+    grammar:'-сыз/-сіз = without. жұмыссыз (unemployed), үйсіз (homeless).'
+  },
+];
+
+// ── Error Detection ────────────────────────────
+const errorBank = [
+  {
+    type:'error',
+    sentence:'Мен базарда барамын.',
+    errorWord:'базарда',
+    question:'"I am going to the market" — one word is wrong. What should it be and why?',
+    answers:['базарға','базарға барамын'],
+    explanation:'"To" (direction) = dative -ға. базарда = at the market (static). базарға = to the market (motion).',
+    grammar:'Motion verbs (бару, келу) → dative -ға/-ге. Position verbs (тұру, отыру) → locative -да/-де.'
+  },
+  {
+    type:'error',
+    sentence:'Досымның кітапы қызықты.',
+    errorWord:'кітапы',
+    question:'Consonant error in the possessive. Find and correct it.',
+    answers:['кітабы','кітабы қызықты','Досымның кітабы қызықты'],
+    explanation:'кітап → before vowel suffix, п→б. So кітаб+ы = кітабы.',
+    grammar:'Consonant softening before vowel suffixes: п→б, к→г, қ→ғ, т→д.'
+  },
+  {
+    type:'error',
+    sentence:'Хоббиттер Ширге тұрды.',
+    errorWord:'Ширге',
+    question:'From the prologue theme: "Hobbits lived in the Shire." Wrong case. Fix it.',
+    answers:['Ширде','Ширде тұрды','Хоббиттер Ширде тұрды'],
+    explanation:'тұру (to live/reside) is static — takes locative -де, not dative -ге. Шир+-де = Ширде.',
+    grammar:'тұру/өмір сүру (live) = static → locative. бару/келу (go/come) = motion → dative.'
+  },
+  {
+    type:'error',
+    sentence:'Олар бейбітшілікті жақсы көреді болды.',
+    errorWord:'болды',
+    question:'"They loved peace" — what is grammatically wrong here?',
+    answers:['болды is wrong','болды is redundant','жақсы көрді','жақсы көреді'],
+    explanation:'You cannot stack two finite verb forms. Either жақсы көреді (present) or жақсы көрді (past). болды makes it ungrammatical.',
+    grammar:'One finite verb per clause. To express past, change the main verb: көреді (loves) → көрді (loved).'
+  },
+  {
+    type:'error',
+    sentence:'Мен кітапты оқыдың.',
+    errorWord:'оқыдың',
+    question:'"I read the book (past)" — wrong person suffix. What should it be?',
+    answers:['оқыдым','Мен кітапты оқыдым'],
+    explanation:'оқыдың = you read (2sg). For I: оқы+ды+м = оқыдым.',
+    grammar:'Past suffixes: -м (I), -ң (you), — (he/she), -қ (we), -ңдар (you pl), — (they).'
+  },
+  {
+    type:'error',
+    sentence:'Ол үйге тұрады.',
+    errorWord:'үйге',
+    question:'"He lives at home." Wrong case. Fix it.',
+    answers:['үйде','Ол үйде тұрады'],
+    explanation:'тұру = static verb → locative. үйде = at home. үйге = toward home.',
+    grammar:'Static position: -да/-де. Direction: -ға/-ге. From: -дан/-ден.'
+  },
+];
+
+// ── LotR Prologue Questions ────────────────────
+const lotrBank = [
+  {
+    type:'lotr',
+    direction:'kz→en',
+    source:'Prologue §1',
+    kz:'Хоббиттер — өте ежелгі және ешкімге зияны жоқ, саны қазіргіден әлдеқайда көп халық.',
+    answers:['Hobbits are a very ancient and harmless people, much more numerous than today','Hobbits are very ancient and harmless, far more numerous than now','Hobbits are a very old people, harmful to no one, far more numerous than at present'],
+    hint:'ежелгі=ancient, ешкімге зияны жоқ=harmful to no one (lit. no harm to anyone), саны=number/count, қазіргіден=than now, әлдеқайда=far/much more, көп=many.',
+    explanation:'Direct from the prologue. Note: зияны жоқ = "no harm" — зиян (harm) + -ы (possessive) + жоқ (none).',
+    grammar:'Comparison: [adj]-дан/-ден әлдеқайда [adj] = "far more [adj] than [noun]". қазіргіден = than the current (time).'
+  },
+  {
+    type:'lotr',
+    direction:'kz→en',
+    source:'Prologue §1',
+    kz:'Олар бейбітшілікті, тыныш өмір сүруді және құнарлы жерді жанындай жақсы көрген.',
+    answers:['They loved peace, quiet life, and fertile land like their own soul','They cherished peace, a quiet life, and fertile land like their own lives','They loved peace, a quiet existence, and fertile land as dear as life itself'],
+    hint:'бейбітшілік=peace, тыныш=quiet, құнарлы=fertile, жер=land, жанындай=like their soul/life (жан=soul).',
+    explanation:'жанындай жақсы көру = to love like one\'s own soul. Жан = soul/life, -ындай = "like/as".',
+    grammar:'-дай/-дей/-тай/-тей = comparative "like/as". жанындай = like a soul. судай = like water. батырдай = like a hero.'
+  },
+  {
+    type:'lotr',
+    direction:'kz→en',
+    source:'Prologue §1',
+    kz:'Қас қағым сәтте ың-шыңсыз көзден ғайып болу — хоббиттердің қанында бар қасиет.',
+    answers:['Disappearing without a sound in the blink of an eye is a quality in the blood of hobbits','To vanish silently in an instant is a trait in the hobbits\' blood','Vanishing soundlessly in a split second is an innate quality of hobbits'],
+    hint:'Қас қағым сәтте=in the blink of an eye, ың-шыңсыз=without a sound (-сыз=without), көзден ғайып болу=to disappear from sight, қанында бар=in the blood.',
+    explanation:'қанында бар қасиет = a quality that exists in the blood. қан (blood) + -ында (locative possessive 3sg) + бар (exists).',
+    grammar:'ың-шың = noise/sound. ың-шыңсыз = without a sound. -сыз/-сіз is the privative suffix you know well.'
+  },
+  {
+    type:'lotr',
+    direction:'en→kz',
+    source:'Prologue §1',
+    en:'"Hobbits never fought with each other." (хоббиттер = hobbits; бір-бірімен = with each other; соғыс- = fight; ешқашан = never)',
+    answers:['Хоббиттер ешқашан бір-бірімен соғыспаған','хоббиттер ешқашан бір-бірімен соғыспаған','Хоббиттер бір-бірімен ешқашан соғыспаған'],
+    hint:'соғыс+па+ған = negative past (reportative). ешқашан = never.',
+    explanation:'Хоббиттер ешқашан бір-бірімен соғыспаған.',
+    grammar:'-паған/-меген = negative past (reportative/hearsay). Slightly softer than -пады — used for general truths and reported facts.'
+  },
+  {
+    type:'lotr',
+    direction:'kz→en',
+    source:'Prologue §1',
+    kz:'Олар өте сақ, көздері өткір және семіруге бейім болып келеді.',
+    answers:['They are very cautious, sharp-eyed, and prone to getting fat','They are very careful, with sharp eyes, and inclined to obesity','They are extremely cautious, keen-eyed, and tend to be fat'],
+    hint:'сақ=cautious/careful, өткір=sharp/keen, семіруге бейім=prone to getting fat (семіру=to fatten, -ге бейім=prone to).',
+    explanation:'болып келеді = "come to be / tend to be". A softer present tense expressing habitual tendency.',
+    grammar:'-ға/-ге бейім = "prone to, inclined toward". семіруге бейім = prone to fattening. өзгеруге бейім = prone to change.'
+  },
+  {
+    type:'lotr',
+    direction:'en→kz',
+    source:'Prologue §1',
+    en:'"This book tells mainly about the life of hobbits." (бұл кітап = this book; негізінен = mainly; хоббиттердің тұрмыс-тіршілігі = the life of hobbits; баяндал- = be narrated)',
+    answers:['Бұл кітапта негізінен хоббиттердің тұрмыс-тіршілігі баяндалады','бұл кітапта негізінен хоббиттердің тұрмыс-тіршілігі баяндалады'],
+    hint:'кітап+-та (locative). баяндалады = is narrated (passive, 3sg present). This is the opening sentence!',
+    explanation:'Бұл кітапта негізінен хоббиттердің тұрмыс-тіршілігі баяндалады. — The very first sentence of the prologue.',
+    grammar:'баяндалады = passive voice (баяндала+ды). Kazakh passives use -ла/-ле/-на/-не + regular tense endings.'
+  },
+  {
+    type:'lotr',
+    direction:'kz→en',
+    source:'Prologue §1',
+    kz:'Бұл халық жөнінде қосымша мәліметті осыдан бұрынырақ «Хоббит» деген атаумен басылып шыққан кітаптан табуға болады.',
+    answers:['Additional information about this people can be found in a book published earlier under the name "The Hobbit"','More information about this people can be found in the book published earlier called "The Hobbit"'],
+    hint:'жөнінде=about, қосымша=additional, мәлімет=information, бұрынырақ=somewhat earlier, атаумен=under the name, басылып шыққан=published (lit. was printed and came out), табуға болады=can be found.',
+    explanation:'табуға болады = "it is possible to find" (lit. "to find is possible"). болады here = is possible.',
+    grammar:'[verb infinitive]-ға/-ге болады = "it is possible to [verb]". баруға болады=can go. оқуға болады=can read.'
+  },
+  {
+    type:'lotr',
+    direction:'kz→en',
+    source:'Prologue §1',
+    kz:'Хоббиттер адамдардан іргесін аулақ салғанымен, олардың бізбен туыс екені белгілі.',
+    answers:['Although hobbits keep their distance from people, it is known that they are related to us','Even though hobbits avoid people, it is well known that they are our relatives','Though hobbits keep away from humans, it is known that they are kin to us'],
+    hint:'іргесін аулақ салу=to keep distance (lit. to put aside one\'s foundation), -ғанымен=although/even though, туыс=related/kin, екені белгілі=it is known that.',
+    explanation:'[verb]-ғанымен = "although [verb]s". екені белгілі = "it is known that it is" — екен (evidential copula) + -і (that) + белгілі (known).',
+    grammar:'-ғанымен/-генімен = concessive "although". барғанымен = although [he] went. білгенімен = although [he] knows.'
+  },
+];
+
+// ── Flashcards from Prologue ───────────────────
+const flashBank = [
+  {kz:'тұрмыс-тіршілік',en:'way of life / daily existence',romanized:'turmys-tirshilik',context:'Opening word of the prologue. тұрмыс=livelihood, тіршілік=existence.'},
+  {kz:'баяндалады',en:'is narrated / is described',romanized:'bayandalaды',context:'Passive present 3sg. The first verb you read in the Kazakh LotR.'},
+  {kz:'ежелгі',en:'ancient / primordial',romanized:'ejelgi',context:'өте ежелгі халық = a very ancient people.'},
+  {kz:'бейбітшілік',en:'peace',romanized:'beybitshilik',context:'бейбіт (peaceful) + -шілік (abstract). Beloved by hobbits.'},
+  {kz:'құнарлы',en:'fertile / nutritious',romanized:'qunarly',context:'құнарлы жер = fertile land. жер = land/earth.'},
+  {kz:'жанындай',en:'like one\'s own soul / as dear as life',romanized:'janyndai',context:'жан (soul) + -ындай (like). жанындай жақсы көру = to love like one\'s soul.'},
+  {kz:'ың-шыңсыз',en:'without a sound / soundlessly',romanized:'yng-shyngsyz',context:'ың-шың (noise) + -сыз (without). Hobbits disappear ың-шыңсыз.'},
+  {kz:'ғайып болу',en:'to disappear / to vanish',romanized:'ğayip bolu',context:'Қас қағым сәтте ғайып болу = to vanish in the blink of an eye.'},
+  {kz:'қасиет',en:'quality / trait / property',romanized:'qasiet',context:'қанында бар қасиет = a trait in the blood.'},
+  {kz:'мағлұмат',en:'information / data',romanized:'mağlumat',context:'Arabic loanword. Also: мәлімет (same meaning, more common now).'},
+  {kz:'тегі',en:'origin / lineage / root',romanized:'tegi',context:'шыққан тегі = origin. -тегі can also mean "belonging to".'},
+  {kz:'белгілі',en:'known / famous / certain',romanized:'belgili',context:'екені белгілі = it is known that. белгілі адам = a famous person.'},
+  {kz:'сақ',en:'cautious / careful / watchful',romanized:'saq',context:'Олар өте сақ = They are very cautious.'},
+  {kz:'өткір',en:'sharp / keen / acute',romanized:'ötkir',context:'көздері өткір = sharp-eyed. өткір пышақ = a sharp knife.'},
+  {kz:'туыс',en:'relative / kin / related',romanized:'tuys',context:'бізбен туыс = related to us. туысқан = relative (noun form).'},
+];
+
+// ═══════════════════════════════════════════════
+// STATE & STREAK
+// ═══════════════════════════════════════════════
+let mode = 'mixed', session = [], qi = 0, score = 0, answered = false;
+
+const streak = (() => {
+  let s = parseInt(localStorage.getItem('kz_streak') || '1');
+  const today = new Date().toDateString();
+  const last  = localStorage.getItem('kz_date') || '';
+  if (last !== today) {
+    s = (last === new Date(Date.now()-86400000).toDateString()) ? s+1 : 1;
+    localStorage.setItem('kz_streak', s);
+    localStorage.setItem('kz_date', today);
+  }
+  return s;
+})();
+document.getElementById('streak-n').textContent = streak;
+
+// ═══════════════════════════════════════════════
+// SESSION BUILDER
+// ═══════════════════════════════════════════════
+function shuffle(a) { return [...a].sort(()=>Math.random()-0.5); }
+
+function buildSession() {
+  const pools = {
+    mixed:    () => shuffle([...shuffle(sentenceBank).slice(0,3), ...shuffle(suffixBank).slice(0,2), ...shuffle(errorBank).slice(0,2), ...shuffle(lotrBank).slice(0,2), ...shuffle(flashBank).slice(0,1).map(x=>({...x,type:'flash'}))]),
+    sentence: () => shuffle(sentenceBank).slice(0,8),
+    suffix:   () => shuffle(suffixBank).slice(0,8),
+    error:    () => shuffle(errorBank).slice(0,8),
+    lotr:     () => shuffle(lotrBank).slice(0,8),
+    flash:    () => shuffle(flashBank).slice(0,10).map(x=>({...x,type:'flash'})),
+  };
+  session = (pools[mode] || pools.mixed)().slice(0,10);
+}
+
+function setMode(m) {
+  mode = m;
+  document.querySelectorAll('.mode-tab').forEach((t,i)=>{
+    t.classList.toggle('active',['mixed','sentence','suffix','error','lotr','flash'][i]===m);
+  });
+  restart();
+}
+
+function restart() {
+  buildSession(); qi=0; score=0; answered=false;
+  document.getElementById('done').classList.remove('on');
+  document.getElementById('card').style.display='';
+  document.getElementById('prog-wrap').style.display='';
+  updateProg(); render();
+}
+
+function updateProg() {
+  document.getElementById('prog-fill').style.width = (qi/session.length*100)+'%';
+  document.getElementById('q-counter').textContent = `${qi+1} / ${session.length}`;
+  document.getElementById('score-live').textContent = `${score} correct`;
+}
+
+// ═══════════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════════
+function render() {
+  const q = session[qi];
+  const card = document.getElementById('card');
+  card.style.animation='none'; void card.offsetWidth; card.style.animation='cardIn 0.3s ease';
+  answered = false;
+  const renders = { sentence:renderSentence, suffix:renderSuffix, error:renderError, lotr:renderLotR, flash:renderFlash };
+  (renders[q.type] || renderSentence)(q, card);
+}
+
+const badge = l => `<div class="q-type-badge">${l}</div>`;
+const hint  = h => `<div class="hint-row"><button class="hint-toggle" onclick="this.nextElementSibling.classList.toggle('on')">Hint</button><span class="hint-text">${h}</span></div>`;
+const ta    = (ph='Type your answer…', rows=2) => `<textarea id="ans" placeholder="${ph}" rows="${rows}" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();checkAnswer()}"></textarea>`;
+const inp   = ph => `<input type="text" id="ans" placeholder="${ph}" onkeydown="if(event.key==='Enter')checkAnswer()">`;
+const fbHTML = () => `<div class="feedback" id="fb"></div><div class="grammar-note" id="gn"></div>`;
+const btns  = () => `<div class="btn-row"><button class="btn btn-check" onclick="checkAnswer()">Check</button><button class="btn btn-primary" id="nxt" onclick="next()" style="display:none">Next →</button></div>`;
+
+function renderSentence(q, card) {
+  const wb = q.words.map((w,i)=>`<div class="word-token">${w} <small>[${q.labels[i]}]</small></div>`).join('');
+  card.innerHTML = `${badge('Sentence Builder')}<div class="q-text">${q.instruction}</div><div class="word-bank"><div class="word-bank-label">Given words</div>${wb}</div>${hint(q.hint)}${ta('Build the full Kazakh sentence…')}${fbHTML()}${btns()}`;
+}
+
+function renderSuffix(q, card) {
+  const chain = q.steps.map((s,i)=>`<span class="suffix-step">${q.root}</span><span class="suffix-arrow">+</span><span class="suffix-step added">${s}</span>${i<q.steps.length-1?'<span class="suffix-arrow">→…</span>':'<span class="suffix-arrow">=</span>'}`).join('');
+  card.innerHTML = `${badge('Suffix Chain')}<div class="q-text">${q.instruction}</div><div class="suffix-chain">${chain}</div>${hint(q.hint)}${inp('Final form after all suffixes…')}${fbHTML()}${btns()}`;
+}
+
+function renderError(q, card) {
+  const display = q.errorWord ? q.sentence.replace(q.errorWord,`<span class="underline">${q.errorWord}</span>`) : q.sentence;
+  card.innerHTML = `${badge('Error Detection')}<div class="q-text">${q.question}</div><div class="error-sentence">${display}</div>${ta('Type the corrected word or full sentence…')}${fbHTML()}${btns()}`;
+}
+
+function renderLotR(q, card) {
+  const src = q.source ? `<div class="source-tag">📖 ${q.source}</div>` : '';
+  const prompt = q.direction==='kz→en'
+    ? `${src}<div class="q-subtext">Translate to English:</div><div class="q-text" style="font-style:italic;color:var(--gold)">${q.kz}</div>`
+    : `${src}<div class="q-subtext">Translate to Kazakh:</div><div class="q-text">${q.en}</div>`;
+  const ph = q.direction==='kz→en' ? 'Your English translation…' : 'Your Kazakh translation…';
+  card.innerHTML = `${badge('LotR Prologue · '+q.direction)}${prompt}${hint(q.hint)}${ta(ph)}${fbHTML()}${btns()}`;
+}
+
+function renderFlash(q, card) {
+  card.innerHTML = `${badge('Prologue Vocabulary')}<div class="tap-hint">TAP TO REVEAL</div>
+  <div class="fc-wrap" onclick="flipCard()">
+    <div class="fc-inner" id="fci">
+      <div class="fc-face"><div class="fc-kz">${q.kz}</div><div class="fc-rom">${q.romanized}</div></div>
+      <div class="fc-face fc-back"><div class="fc-en">${q.en}</div><div class="fc-ctx">${q.context}</div></div>
+    </div>
+  </div>
+  <div class="self-row" id="sr" style="display:none">
+    <button class="btn-didnt" onclick="selfReport(false)">✗ Didn't know</button>
+    <button class="btn-knew" onclick="selfReport(true)">✓ Knew it</button>
+  </div>`;
+}
+
+function flipCard() {
+  document.getElementById('fci').classList.toggle('flipped');
+  document.getElementById('sr').style.display='flex';
+  answered = true;
+}
+function selfReport(knew) { if(knew) score++; next(); }
+
+// ═══════════════════════════════════════════════
+// CHECKING
+// ═══════════════════════════════════════════════
+function normalize(s) {
+  return (s||'').trim().toLowerCase().replace(/[.,!?»«"'–—]/g,'').replace(/\s+/g,' ');
+}
+
+function checkAnswer() {
+  if (answered) return;
+  const el = document.getElementById('ans');
+  if (!el || !el.value.trim()) return;
+  answered = true;
+
+  const q = session[qi];
+  const val = el.value.trim();
+  const norm = normalize(val);
+  const answers = Array.isArray(q.answers) ? q.answers : [];
+  const isOk = answers.length > 0 && answers.some(a => {
+    const na = normalize(a);
+    return na === norm || norm.includes(na) || na.includes(norm);
+  });
+
+  el.classList.add(isOk ? 'ok' : 'err');
+  el.disabled = true;
+  if (isOk) score++;
+
+  const explanation = q.explanation || '';
+  const correct = answers[0] || '';
+  const fb = document.getElementById('fb');
+  fb.className = `feedback on ${isOk?'ok':'err'}`;
+  fb.innerHTML = isOk
+    ? `✓ Correct.<div class="exp">${explanation}</div>`
+    : `<span class="answer">${correct}</span><div class="exp">${explanation}</div>`;
+
+  if (q.grammar) {
+    const gn = document.getElementById('gn');
+    gn.innerHTML = `📌 ${q.grammar}`;
+    gn.className = 'grammar-note on';
+  }
+
+  const chk = document.querySelector('.btn-check');
+  if (chk) chk.style.display = 'none';
+  document.getElementById('nxt').style.display = 'block';
+  updateProg();
+}
+
+function next() {
+  qi++;
+  if (qi >= session.length) showDone();
+  else { updateProg(); render(); }
+}
+
+function showDone() {
+  document.getElementById('card').style.display='none';
+  document.getElementById('prog-wrap').style.display='none';
+  const pct = Math.round(score/session.length*100);
+  document.getElementById('d-correct').textContent = score;
+  document.getElementById('d-total').textContent = session.length;
+  document.getElementById('d-pct').textContent = pct+'%';
+  document.getElementById('done').classList.add('on');
+}
+
+// ═══════════════════════════════════════════════
+// PWA — Install prompt
+// ═══════════════════════════════════════════════
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  const alreadyDismissed = localStorage.getItem('kz_install_dismissed');
+  if (!alreadyDismissed) {
+    document.getElementById('install-banner').classList.add('on');
+  }
+});
+
+function installApp() {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(r => {
+    deferredPrompt = null;
+    document.getElementById('install-banner').classList.remove('on');
+    if (r.outcome === 'dismissed') localStorage.setItem('kz_install_dismissed','1');
+  });
+}
+
+// Register service worker
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  });
+}
+
+// Init
+restart();
+        </script>
+    </body>
+</html>
